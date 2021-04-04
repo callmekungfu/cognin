@@ -1,5 +1,10 @@
 import { SignUpOptions } from '../types';
-import { SignUpRequestBody, UserPoolRequestBody } from '../types/user-pool';
+import {
+  SignUpRequestBody,
+  SignUpResponseBody,
+  UserPoolRequestBody,
+} from '../types/user-pool';
+import { InvalidPasswordException, UserPoolExceptionHandler } from './error';
 import { isEmptyObject } from './helpers';
 
 export interface UserPoolConnection {
@@ -24,7 +29,7 @@ export class UserPool {
     this.clientMetadata = config.clientMetadata;
   }
 
-  signUp(params: SignUpOptions) {
+  async signUp(params: SignUpOptions) {
     const requestBody: SignUpRequestBody = {
       ClientId: this.clientId,
       ClientMetadata: this.clientMetadata,
@@ -32,6 +37,7 @@ export class UserPool {
       Username: params.username,
     };
 
+    // Build user attributes array
     if (params.attributes && !isEmptyObject(params.attributes)) {
       requestBody.UserAttributes = [];
       for (const key of Object.keys(params.attributes)) {
@@ -41,21 +47,48 @@ export class UserPool {
         });
       }
     }
+
+    // Build Validation Data Array
+    if (params.validationData && !isEmptyObject(params.validationData)) {
+      requestBody.ValidationData = [];
+      for (const key of Object.keys(params.validationData)) {
+        requestBody.ValidationData.push({
+          Name: key,
+          Value: params.validationData[key],
+        });
+      }
+    }
+
+    return this.request<SignUpResponseBody>('SignUp', requestBody);
   }
 
-  private async request(action: string, body: UserPoolRequestBody) {
+  async confirmSignUp() {}
+
+  private async request<T = any>(
+    action: string,
+    body: UserPoolRequestBody,
+    appendMetadata = true,
+  ): Promise<T> {
     const headers = {
       ...DEFAULT_REQUEST_HEADERS,
       'x-amz-target': `AWSCognitoIdentityProviderService.${action}`,
     };
+
+    if (appendMetadata) {
+      body.ClientMetadata = this.clientMetadata;
+    }
 
     const res = await fetch(this.host, {
       method: 'POST',
       headers,
       body: JSON.stringify(body),
     });
+    const resBody = await res.json();
 
     if (!res.ok) {
+      throw UserPoolExceptionHandler.handle(resBody);
     }
+
+    return resBody;
   }
 }

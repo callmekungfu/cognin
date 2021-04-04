@@ -1,5 +1,12 @@
-const world = 'world';
+import { Cognin } from './cognin';
 
-export function hello(word: string = world): string {
-  return `Hello ${word}!`;
+let instance: Cognin | null = null;
+
+if (!instance) {
+  instance = new Cognin();
 }
+
+const Auth = instance;
+
+export default Auth;
+export { Cognin };

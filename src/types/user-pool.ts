@@ -25,3 +25,15 @@ export interface UserAttribute {
 export interface UserContextData {
   EncodedData: string;
 }
+
+export interface SignUpResponseBody {
+  CodeDeliveryDetails: CodeDeliveryDetails;
+  UserConfirmed: boolean;
+  UserSub: string;
+}
+
+export interface CodeDeliveryDetails {
+  AttributeName: string;
+  DeliveryMedium: string;
+  Destination: string;
+}

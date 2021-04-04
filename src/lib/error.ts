@@ -11,13 +11,13 @@ export interface UserPoolException {
 }
 
 export class UserPoolExceptionHandler {
-  static convert(body?: UserPoolErrorBody) {
+  static handle(body?: UserPoolErrorBody) {
     if (body) {
       switch (body.__type) {
         case 'InvalidPasswordException':
-          throw new InvalidPasswordException(body.message);
+          return new InvalidPasswordException(body.message);
         default:
-          throw new GenericUserPoolException(body.__type, body.message);
+          return new GenericUserPoolException(body.__type, body.message);
       }
     }
   }
