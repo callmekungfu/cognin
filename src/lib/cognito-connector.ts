@@ -4,6 +4,7 @@ import {
   SignUpResponseBody,
   UserPoolRequestBody,
 } from '../types/user-pool';
+import { SupportedUserPoolAction } from './cognito-actions';
 import { InvalidPasswordException, UserPoolExceptionHandler } from './error';
 import { isEmptyObject } from './helpers';
 
@@ -65,7 +66,7 @@ export class UserPool {
   async confirmSignUp() {}
 
   private async request<T = any>(
-    action: string,
+    action: SupportedUserPoolAction,
     body: UserPoolRequestBody,
     appendMetadata = true,
   ): Promise<T> {
