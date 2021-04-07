@@ -1,0 +1,4 @@
+__test__/
+src/
+.env
+.vscode
