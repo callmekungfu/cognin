@@ -93,7 +93,7 @@ export class UserPool {
     if (options) {
       requestBody = { ...requestBody, ...options };
     }
-    return this.request<CodeDeliveryDetails>('ForgetPassword', requestBody);
+    return this.request<CodeDeliveryDetails>('ForgotPassword', requestBody);
   }
 
   async confirmPasswordReset(
@@ -111,7 +111,7 @@ export class UserPool {
     if (options) {
       requestBody = { ...requestBody, ...options };
     }
-    return this.request<EmptyObject>('ConfirmForgetPassword', requestBody);
+    return this.request<EmptyObject>('ConfirmForgotPassword', requestBody);
   }
 
   private async request<T = any>(

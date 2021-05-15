@@ -62,6 +62,12 @@ export class Cognin {
     options?: GeneralRequestOptions,
   ) {
     this.validateClient();
+    return this.userPool.confirmPasswordReset(
+      username,
+      password,
+      code,
+      options,
+    );
   }
 
   private validateClient() {

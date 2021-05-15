@@ -1,8 +1,9 @@
 export const SupportedUserPoolActionArray = <const>[
   'SignUp',
   'ConfirmSignUp',
-  'ForgetPassword',
-  'ConfirmForgetPassword',
+  'ForgotPassword',
+  'ConfirmForgotPassword',
+  'InitiateAuth',
 ];
 export type SupportedUserPoolAction =
   typeof SupportedUserPoolActionArray[number];
