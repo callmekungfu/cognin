@@ -1,12 +1,15 @@
-import { GeneralRequestOptions, SignUpOptions } from '../types';
+import { EmptyObject, GeneralRequestOptions, SignUpOptions } from '../types';
 import {
+  CodeDeliveryDetails,
+  ConfirmResetPasswordRequestBody,
   ConfirmSignUpRequestBody,
+  ResetPasswordRequestBody,
   SignUpRequestBody,
   SignUpResponseBody,
   UserPoolRequestBody,
 } from '../types/user-pool';
 import { SupportedUserPoolAction } from './cognito-actions';
-import { InvalidPasswordException, UserPoolExceptionHandler } from './error';
+import { UserPoolExceptionHandler } from './error';
 import { isEmptyObject } from './helpers';
 
 export interface UserPoolConnection {
@@ -76,7 +79,39 @@ export class UserPool {
     if (options) {
       requestBody = { ...requestBody, ...options };
     }
-    return this.request<never>('ConfirmSignUp', requestBody);
+    return this.request<EmptyObject>('ConfirmSignUp', requestBody);
+  }
+
+  async requestPasswordReset(
+    username: string,
+    options?: GeneralRequestOptions,
+  ) {
+    let requestBody: ResetPasswordRequestBody = {
+      ClientId: this.clientId,
+      Username: username,
+    };
+    if (options) {
+      requestBody = { ...requestBody, ...options };
+    }
+    return this.request<CodeDeliveryDetails>('ForgetPassword', requestBody);
+  }
+
+  async confirmPasswordReset(
+    username: string,
+    password: string,
+    code: string,
+    options?: GeneralRequestOptions,
+  ) {
+    let requestBody: ConfirmResetPasswordRequestBody = {
+      ClientId: this.clientId,
+      Username: username,
+      Password: password,
+      ConfirmationCode: code,
+    };
+    if (options) {
+      requestBody = { ...requestBody, ...options };
+    }
+    return this.request<EmptyObject>('ConfirmForgetPassword', requestBody);
   }
 
   private async request<T = any>(

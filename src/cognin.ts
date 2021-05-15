@@ -37,6 +37,7 @@ export class Cognin {
     this.validateClient();
     return this.userPool.signUp(opts);
   }
+
   public confirmSignUp(
     username: string,
     code: string,
@@ -44,6 +45,23 @@ export class Cognin {
   ) {
     this.validateClient();
     return this.userPool.confirmSignUp(username, code, confirmOptions);
+  }
+
+  public requestPasswordReset(
+    username: string,
+    options?: GeneralRequestOptions,
+  ) {
+    this.validateClient();
+    return this.userPool.requestPasswordReset(username, options);
+  }
+
+  public confirmPasswordReset(
+    username: string,
+    password: string,
+    code: string,
+    options?: GeneralRequestOptions,
+  ) {
+    this.validateClient();
   }
 
   private validateClient() {

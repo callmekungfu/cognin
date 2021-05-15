@@ -1,5 +1,11 @@
-export const SupportedUserPoolActionArray = <const>['SignUp', 'ConfirmSignUp'];
-export type SupportedUserPoolAction = typeof SupportedUserPoolActionArray[number];
+export const SupportedUserPoolActionArray = <const>[
+  'SignUp',
+  'ConfirmSignUp',
+  'ForgetPassword',
+  'ConfirmForgetPassword',
+];
+export type SupportedUserPoolAction =
+  typeof SupportedUserPoolActionArray[number];
 
 const userPoolActionSet = new Set(SupportedUserPoolActionArray);
 

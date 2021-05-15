@@ -1,3 +1,9 @@
+import {
+  AnalyticsMetadata,
+  GeneralRequestOptions,
+  UserContextData,
+} from '../types';
+
 export interface UserPoolRequestBody {
   ClientId: string;
   ClientMetadata?: Record<string, string>;
@@ -13,26 +19,31 @@ export interface SignUpRequestBody extends UserPoolRequestBody {
   ValidationData?: UserAttribute[];
 }
 
-export interface ConfirmSignUpRequestBody extends UserPoolRequestBody {
-  AnalyticsMetadata?: AnalyticsMetadata;
+export interface ConfirmSignUpRequestBody
+  extends UserPoolRequestBody,
+    GeneralRequestOptions {
   ConfirmationCode: string;
   ForceAliasCreation?: boolean;
-  SecretHash?: string;
-  UserContextData?: UserContextData;
   Username: string;
 }
 
-export interface AnalyticsMetadata {
-  AnalyticsEndpointId: string;
+export interface ResetPasswordRequestBody
+  extends UserPoolRequestBody,
+    GeneralRequestOptions {
+  Username: string;
+}
+
+export interface ConfirmResetPasswordRequestBody
+  extends UserPoolRequestBody,
+    GeneralRequestOptions {
+  Username: string;
+  Password: string;
+  ConfirmationCode: string;
 }
 
 export interface UserAttribute {
   Name: string;
   Value: string;
-}
-
-export interface UserContextData {
-  EncodedData: string;
 }
 
 export interface SignUpResponseBody {
