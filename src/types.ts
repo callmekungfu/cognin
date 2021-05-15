@@ -15,7 +15,6 @@ export interface CogninConfiguration {
   authenticationFlow?:
     | 'USER_SRP_AUTH'
     | 'USER_PASSWORD_AUTH'
-    | 'USER_SRP_AUTH'
     | 'CUSTOM_AUTH'
     | 'ADMIN_USER_PASSWORD_AUTH';
 }
@@ -42,3 +41,10 @@ export interface AnalyticsMetadata {
 export interface UserContextData {
   EncodedData: string;
 }
+
+export type AuthFlows =
+  | 'REFRESH_TOKEN_AUTH'
+  | 'USER_SRP_AUTH'
+  | 'USER_PASSWORD_AUTH'
+  | 'CUSTOM_AUTH'
+  | 'ADMIN_USER_PASSWORD_AUTH';

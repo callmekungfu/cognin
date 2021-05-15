@@ -24,7 +24,7 @@ export class Cognin {
     if (check) {
       throw Error(check);
     }
-    this.config = config;
+    this.config = { ...defaultConfigOptions, ...config };
     this.userPool = new UserPool({
       clientId: this.config.clientId,
       clientMetadata: this.config.clientMetadata ?? {},
@@ -68,6 +68,27 @@ export class Cognin {
       code,
       options,
     );
+  }
+
+  public async signIn(username: string, password?: string) {
+    this.validateClient();
+    const preferredFlow = this.config.authenticationFlow ?? 'USER_SRP_AUTH';
+    let params: Record<string, string> = {
+      USERNAME: username,
+    };
+
+    if (password) {
+      if (preferredFlow === 'USER_SRP_AUTH') {
+        params.SRP_A = password;
+      } else {
+        params.PASSWORD = password;
+      }
+    }
+
+    const res = await this.userPool.initiateAuth(params, preferredFlow);
+    console.log(res);
+
+    return null;
   }
 
   private validateClient() {

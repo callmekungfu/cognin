@@ -1,8 +1,15 @@
-import { EmptyObject, GeneralRequestOptions, SignUpOptions } from '../types';
+import {
+  AuthFlows,
+  EmptyObject,
+  GeneralRequestOptions,
+  SignUpOptions,
+} from '../types';
 import {
   CodeDeliveryDetails,
   ConfirmResetPasswordRequestBody,
   ConfirmSignUpRequestBody,
+  InitiateAuthRequestBody,
+  InitiateAuthResponseBody,
   ResetPasswordRequestBody,
   SignUpRequestBody,
   SignUpResponseBody,
@@ -34,6 +41,12 @@ export class UserPool {
     this.clientMetadata = config.clientMetadata;
   }
 
+  /**
+   * Perform a sign up operation with Cognito's API.
+   *
+   * @param params Sign up parameter options
+   * @returns The response body of the sign up operation
+   */
   async signUp(params: SignUpOptions) {
     const requestBody: SignUpRequestBody = {
       ClientId: this.clientId,
@@ -112,6 +125,22 @@ export class UserPool {
       requestBody = { ...requestBody, ...options };
     }
     return this.request<EmptyObject>('ConfirmForgotPassword', requestBody);
+  }
+
+  async initiateAuth(
+    authParams: Record<string, string>,
+    authType: AuthFlows,
+    options?: GeneralRequestOptions,
+  ) {
+    let requestBody: InitiateAuthRequestBody = {
+      ClientId: this.clientId,
+      AuthFlow: authType,
+      AuthParameters: authParams,
+    };
+    if (options) {
+      requestBody = { ...requestBody, ...options };
+    }
+    return this.request<InitiateAuthResponseBody>('InitiateAuth', requestBody);
   }
 
   private async request<T = any>(
