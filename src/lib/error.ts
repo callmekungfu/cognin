@@ -20,6 +20,10 @@ export class UserPoolExceptionHandler {
           return new GenericUserPoolException(body.__type, body.message);
       }
     }
+    return new GenericUserPoolException(
+      'No Body',
+      'This error failed with no error body.',
+    );
   }
 }
 

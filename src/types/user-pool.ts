@@ -14,11 +14,11 @@ export interface SignUpRequestBody extends UserPoolRequestBody {
 }
 
 export interface ConfirmSignUpRequestBody extends UserPoolRequestBody {
-  AnalyticsMetadata: AnalyticsMetadata;
+  AnalyticsMetadata?: AnalyticsMetadata;
   ConfirmationCode: string;
-  ForceAliasCreation: boolean;
-  SecretHash: string;
-  UserContextData: UserContextData;
+  ForceAliasCreation?: boolean;
+  SecretHash?: string;
+  UserContextData?: UserContextData;
   Username: string;
 }
 

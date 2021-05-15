@@ -1,3 +1,5 @@
+import { AnalyticsMetadata, UserContextData } from './types/user-pool';
+
 export interface oAuthConfiguration {
   domain: string;
   scope: string[];
@@ -25,4 +27,12 @@ export interface SignUpOptions {
   password: string;
   attributes?: Record<string, string>;
   validationData?: Record<string, string>;
+}
+
+export interface GeneralRequestOptions {
+  AnalyticsMetadata?: AnalyticsMetadata;
+  ConfirmationCode: string;
+  ForceAliasCreation?: boolean;
+  SecretHash?: string;
+  UserContextData?: UserContextData;
 }

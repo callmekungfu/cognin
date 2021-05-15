@@ -1,5 +1,9 @@
 import { UserPool } from './lib/cognito-connector';
-import { CogninConfiguration, SignUpOptions } from './types';
+import {
+  CogninConfiguration,
+  GeneralRequestOptions,
+  SignUpOptions,
+} from './types';
 
 const defaultConfigOptions: Partial<CogninConfiguration> = {
   authenticationFlow: 'USER_SRP_AUTH',
@@ -30,6 +34,19 @@ export class Cognin {
   }
 
   public signUp(opts: SignUpOptions) {
+    this.validateClient();
+    return this.userPool.signUp(opts);
+  }
+  public confirmSignUp(
+    username: string,
+    code: string,
+    confirmOptions?: GeneralRequestOptions,
+  ) {
+    this.validateClient();
+    return this.userPool.confirmSignUp(username, code, confirmOptions);
+  }
+
+  private validateClient() {
     if (!this.config) {
       throw Error(
         'Cognin instance is not yet configured, please call Auth.configure first.',
@@ -41,8 +58,6 @@ export class Cognin {
         'Cognin instance is not configured for working with user pools.',
       );
     }
-
-    return this.userPool.signUp(opts);
   }
 
   private assertConfig(config: CogninConfiguration) {

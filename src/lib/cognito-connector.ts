@@ -1,5 +1,6 @@
-import { SignUpOptions } from '../types';
+import { GeneralRequestOptions, SignUpOptions } from '../types';
 import {
+  ConfirmSignUpRequestBody,
   SignUpRequestBody,
   SignUpResponseBody,
   UserPoolRequestBody,
@@ -33,7 +34,6 @@ export class UserPool {
   async signUp(params: SignUpOptions) {
     const requestBody: SignUpRequestBody = {
       ClientId: this.clientId,
-      ClientMetadata: this.clientMetadata,
       Password: params.password,
       Username: params.username,
     };
@@ -63,7 +63,21 @@ export class UserPool {
     return this.request<SignUpResponseBody>('SignUp', requestBody);
   }
 
-  async confirmSignUp() {}
+  async confirmSignUp(
+    username: string,
+    code: string,
+    options?: GeneralRequestOptions,
+  ) {
+    let requestBody: ConfirmSignUpRequestBody = {
+      ClientId: this.clientId,
+      Username: username,
+      ConfirmationCode: code,
+    };
+    if (options) {
+      requestBody = { ...requestBody, ...options };
+    }
+    return this.request<never>('ConfirmSignUp', requestBody);
+  }
 
   private async request<T = any>(
     action: SupportedUserPoolAction,
@@ -84,7 +98,15 @@ export class UserPool {
       headers,
       body: JSON.stringify(body),
     });
-    const resBody = await res.json();
+
+    let resBody = null;
+
+    // res.headers.get('content-type')
+    try {
+      resBody = await res.json();
+    } catch (e) {
+      resBody = {};
+    }
 
     if (!res.ok) {
       throw UserPoolExceptionHandler.handle(resBody);
