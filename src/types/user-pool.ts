@@ -43,6 +43,14 @@ export interface InitiateAuthRequestBody
   AuthParameters: Record<string, string>;
 }
 
+export interface RespondToAuthRequestBody
+  extends UserPoolRequestBody,
+    GeneralRequestOptions {
+  ChallengeName: string;
+  Session?: string;
+  ChallengeResponses: Record<string, string>;
+}
+
 export interface UserAttribute {
   Name: string;
   Value: string;

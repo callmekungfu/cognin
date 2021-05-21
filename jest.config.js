@@ -5,5 +5,5 @@ module.exports = {
     '**/__tests__/**/*.+(ts|tsx|js)',
     '**/?(*.)+(spec|test).+(ts|tsx|js)',
   ],
-  setupFiles: ['dotenv/config'],
+  setupFiles: ['dotenv/config', './test_setup/setup.ts'],
 };

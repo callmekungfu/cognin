@@ -1,4 +1,5 @@
 import {
+  AuthChallenge,
   AuthFlows,
   EmptyObject,
   GeneralRequestOptions,
@@ -11,6 +12,7 @@ import {
   InitiateAuthRequestBody,
   InitiateAuthResponseBody,
   ResetPasswordRequestBody,
+  RespondToAuthRequestBody,
   SignUpRequestBody,
   SignUpResponseBody,
   UserPoolRequestBody,
@@ -34,9 +36,11 @@ export class UserPool {
   host: string;
   clientId: string;
   clientMetadata: Record<string, string>;
+  userPoolId: string;
 
   constructor(config: UserPoolConnection) {
     this.host = `https://cognito-idp.${config.region}.amazonaws.com`;
+    this.userPoolId = config.userPoolId;
     this.clientId = config.clientId;
     this.clientMetadata = config.clientMetadata;
   }
@@ -141,6 +145,27 @@ export class UserPool {
       requestBody = { ...requestBody, ...options };
     }
     return this.request<InitiateAuthResponseBody>('InitiateAuth', requestBody);
+  }
+
+  async respondToAuthChallenge(
+    challenge: AuthChallenge,
+    challengeParams: Record<string, string>,
+    session?: string,
+  ) {
+    const requestBody: RespondToAuthRequestBody = {
+      ClientId: this.clientId,
+      ChallengeName: challenge,
+      ChallengeResponses: challengeParams,
+    };
+
+    if (session) {
+      requestBody.Session = session;
+    }
+
+    return this.request<InitiateAuthResponseBody>(
+      'RespondToAuthChallenge',
+      requestBody,
+    );
   }
 
   private async request<T = any>(
