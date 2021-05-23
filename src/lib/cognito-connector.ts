@@ -9,13 +9,14 @@ import {
   CodeDeliveryDetails,
   ConfirmResetPasswordRequestBody,
   ConfirmSignUpRequestBody,
+  GetUserRequestBody,
   InitiateAuthRequestBody,
   InitiateAuthResponseBody,
   ResetPasswordRequestBody,
   RespondToAuthRequestBody,
   SignUpRequestBody,
   SignUpResponseBody,
-  UserPoolRequestBody,
+  GetUserResponse,
 } from '../types/user-pool';
 import { SupportedUserPoolAction } from './cognito-actions';
 import { UserPoolExceptionHandler } from './error';
@@ -43,6 +44,10 @@ export class UserPool {
     this.userPoolId = config.userPoolId;
     this.clientId = config.clientId;
     this.clientMetadata = config.clientMetadata;
+  }
+
+  getUserPoolIdentifier() {
+    return this.userPoolId.split('_')[1];
   }
 
   /**
@@ -168,9 +173,17 @@ export class UserPool {
     );
   }
 
+  async getUser(accessToken: string) {
+    const requestBody: GetUserRequestBody = {
+      AccessToken: accessToken,
+    };
+
+    return this.request<GetUserResponse>('GetUser', requestBody);
+  }
+
   private async request<T = any>(
     action: SupportedUserPoolAction,
-    body: UserPoolRequestBody,
+    body: any,
     appendMetadata = true,
   ): Promise<T> {
     const headers = {

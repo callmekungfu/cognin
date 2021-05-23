@@ -1,4 +1,7 @@
 import { UserPool } from './lib/cognito-connector';
+import { Logger } from './lib/logger';
+import { SRPClient } from './lib/srp-client';
+import { CognitoUser } from './lib/user';
 import {
   CogninConfiguration,
   GeneralRequestOptions,
@@ -76,18 +79,26 @@ export class Cognin {
     let params: Record<string, string> = {
       USERNAME: username,
     };
-
+    let res;
     if (password) {
       if (preferredFlow === 'USER_SRP_AUTH') {
-        params.SRP_A = password;
-      } else {
+        res = await new SRPClient().authenticate(
+          this.userPool,
+          username,
+          password,
+        );
+      } else if (preferredFlow === 'USER_PASSWORD_AUTH') {
         params.PASSWORD = password;
+        res = await this.userPool.initiateAuth(params, preferredFlow);
+      } else {
+        Logger.error('CUSTOM_AUTH is not yet supported.');
       }
     }
-
-    const res = await this.userPool.initiateAuth(params, preferredFlow);
-    console.log(res);
-
+    if (res?.AuthenticationResult) {
+      return new CognitoUser(username, this.userPool).authenticate(
+        res.AuthenticationResult,
+      );
+    }
     return null;
   }
 

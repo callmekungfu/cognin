@@ -5,5 +5,9 @@ module.exports = {
     '**/__tests__/**/*.+(ts|tsx|js)',
     '**/?(*.)+(spec|test).+(ts|tsx|js)',
   ],
-  setupFiles: ['dotenv/config', './test_setup/setup.ts'],
+  setupFiles: [
+    'dotenv/config',
+    './test_setup/setup.ts',
+    'jest-localstorage-mock',
+  ],
 };

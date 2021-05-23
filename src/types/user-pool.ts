@@ -51,6 +51,10 @@ export interface RespondToAuthRequestBody
   ChallengeResponses: Record<string, string>;
 }
 
+export interface GetUserRequestBody {
+  AccessToken: string;
+}
+
 export interface UserAttribute {
   Name: string;
   Value: string;
@@ -77,6 +81,24 @@ export interface InitiateAuthResponseBody {
     | 'NEW_PASSWORD_REQUIRED';
   ChallengeParameters?: Record<string, string>;
   Session?: string;
+}
+
+export interface GetUserResponse {
+  MFAOptions: MFAOption[];
+  PreferredMfaSetting: string;
+  UserAttributes: UserAttribute[];
+  UserMFASettingList: string[];
+  Username: string;
+}
+
+export interface MFAOption {
+  AttributeName: string;
+  DeliveryMedium: string;
+}
+
+export interface UserAttribute {
+  Name: string;
+  Value: string;
 }
 
 export interface AuthenticationResult {
