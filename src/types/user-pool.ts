@@ -55,6 +55,11 @@ export interface GetUserRequestBody {
   AccessToken: string;
 }
 
+export interface AssociateSoftwareTokenRequestBody {
+  AccessToken: string;
+  Session?: String;
+}
+
 export interface UserAttribute {
   Name: string;
   Value: string;
@@ -89,6 +94,11 @@ export interface GetUserResponse {
   UserAttributes: UserAttribute[];
   UserMFASettingList: string[];
   Username: string;
+}
+
+export interface AssociateSoftwareTokenResponseBody {
+  SecretCode: string;
+  Session: string;
 }
 
 export interface MFAOption {

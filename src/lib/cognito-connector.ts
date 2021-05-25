@@ -17,6 +17,7 @@ import {
   SignUpRequestBody,
   SignUpResponseBody,
   GetUserResponse,
+  AssociateSoftwareTokenResponseBody,
 } from '../types/user-pool';
 import { SupportedUserPoolAction } from './cognito-actions';
 import { UserPoolExceptionHandler } from './error';
@@ -179,6 +180,17 @@ export class UserPool {
     };
 
     return this.request<GetUserResponse>('GetUser', requestBody);
+  }
+
+  async associateSoftwareToken(accessToken: string) {
+    const requestBody: GetUserRequestBody = {
+      AccessToken: accessToken,
+    };
+
+    return this.request<AssociateSoftwareTokenResponseBody>(
+      'AssociateSoftwareToken',
+      requestBody,
+    );
   }
 
   private async request<T = any>(

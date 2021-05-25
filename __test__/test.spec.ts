@@ -19,7 +19,7 @@ describe('Cognin Class Config', () => {
   });
 });
 
-fdescribe('Cognin Class', () => {
+describe('Cognin Class', () => {
   let auth: Cognin;
   beforeEach(() => {
     auth = new Cognin();
@@ -33,19 +33,5 @@ fdescribe('Cognin Class', () => {
   it('will sign in to user pool', async () => {
     const user = await auth.signIn(username, password);
     expect(user).toBeTruthy();
-  });
-
-  it('will fetch user attributes after sign in', async () => {
-    const user = await auth.signIn(username, password);
-    if (!user) {
-      throw Error('Sign in failed');
-    }
-    const res = await user.getUserAttributes();
-    expect(res).toBeTruthy();
-
-    global.fetch = jest.fn().mockImplementation(() => Promise.resolve());
-    const map = await user.getUserAttributeMap();
-    expect(map.sub).toBeTruthy();
-    expect(fetch).not.toHaveBeenCalled();
   });
 });
