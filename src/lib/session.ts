@@ -20,6 +20,15 @@ export class CognitoSession {
     this.clockDrift = clockDrift ?? this.calculateClockDrift();
   }
 
+  /**
+   * Returns a session from tokens stored in local storage.
+   *
+   * This method does not validate if the tokens are valid. You need to do that
+   * in a separate call.
+   *
+   * @param prefix the storage prefix for fetching tokens
+   * @returns a valid session if all tokens have been found, null otherwise
+   */
   static fromCache(prefix: string) {
     const getKey = (token: string) => prefix + token;
     const RefreshToken = localStorage.getItem(getKey('refreshToken'));
@@ -83,6 +92,12 @@ export class CognitoSession {
     localStorage.setItem(fullKey, token);
   }
 
+  /**
+   * Calculate a default clock drift value according to the information
+   * in the access and id tokens.
+   *
+   * @returns The clock drift value calculated
+   */
   private calculateClockDrift() {
     const now = Math.floor(new Date().getTime() / 1000);
     const iat = Math.min(

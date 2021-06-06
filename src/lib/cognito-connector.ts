@@ -140,6 +140,13 @@ export class UserPool {
     return this.request<EmptyObject>('ConfirmForgotPassword', requestBody);
   }
 
+  /**
+   * TODO
+   * @param authParams
+   * @param authType
+   * @param options
+   * @returns
+   */
   async initiateAuth(
     authParams: Record<string, string>,
     authType: AuthFlows,
@@ -156,6 +163,14 @@ export class UserPool {
     return this.request<InitiateAuthResponseBody>('InitiateAuth', requestBody);
   }
 
+  /**
+   * TODO
+   *
+   * @param challenge
+   * @param challengeParams
+   * @param session
+   * @returns
+   */
   async respondToAuthChallenge(
     challenge: AuthChallenge,
     challengeParams: Record<string, string>,
@@ -177,6 +192,11 @@ export class UserPool {
     );
   }
 
+  /**
+   * TODO
+   * @param accessToken
+   * @returns
+   */
   async getUser(accessToken: string) {
     const requestBody: GetUserRequestBody = {
       AccessToken: accessToken,
@@ -185,6 +205,11 @@ export class UserPool {
     return this.request<GetUserResponse>('GetUser', requestBody);
   }
 
+  /**
+   * TODO
+   * @param accessToken The access token to use
+   * @returns
+   */
   async associateSoftwareToken(accessToken: string) {
     const requestBody: AssociateSoftwareTokenRequestBody = {
       AccessToken: accessToken,
@@ -196,6 +221,14 @@ export class UserPool {
     );
   }
 
+  /**
+   * Request to verify a user's software token by taking a code
+   *
+   * @param accessToken The user access token
+   * @param code The user code from the OTP client
+   * @param friendlyDeviceName A friendly device name to record
+   * @returns the response body from the requested action
+   */
   async verifySoftwareToken(
     accessToken: string,
     code: string,
@@ -216,6 +249,14 @@ export class UserPool {
 
   async verifyAttribute() {}
 
+  /**
+   * A generic function for sending requests to Cognito
+   *
+   * @param action The action to perform
+   * @param body The request body
+   * @param appendMetadata should append ClientMetadata to the request body
+   * @returns The response body in json format
+   */
   private async request<T = any>(
     action: SupportedUserPoolAction,
     body: any,
