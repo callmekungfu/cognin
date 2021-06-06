@@ -7,6 +7,7 @@ export const SupportedUserPoolActionArray = <const>[
   'RespondToAuthChallenge',
   'GetUser',
   'AssociateSoftwareToken',
+  'VerifySoftwareToken',
 ];
 export type SupportedUserPoolAction =
   typeof SupportedUserPoolActionArray[number];

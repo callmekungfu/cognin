@@ -14,11 +14,20 @@ export class CognitoUser {
 
   constructor(private username: string, private userPool: UserPool) {
     this.prefix = `${userPool.getUserPoolIdentifier()}.${username}`;
+    this.loadSessionFromCache();
+  }
+
+  private get accessToken() {
+    return this.session?.accessToken?.getJWTToken() ?? '';
   }
 
   authenticate(res: AuthenticationResult) {
     this.session = new CognitoSession(res, this.prefix);
     return this;
+  }
+
+  loadSessionFromCache() {
+    this.session = CognitoSession.fromCache(this.prefix);
   }
 
   getSession() {
@@ -33,11 +42,9 @@ export class CognitoUser {
   }
 
   async getUserAttributes() {
-    this.checkUserSession();
+    await this.checkUserSession();
     if (!this.userAttributes) {
-      const res = await this.userPool.getUser(
-        this.session?.accessToken?.getJWTToken() ?? '',
-      );
+      const res = await this.userPool.getUser(this.accessToken);
       this.user = res;
       this.userAttributes = res.UserAttributes;
     }
@@ -45,7 +52,7 @@ export class CognitoUser {
   }
 
   async getUserAttributeMap() {
-    this.checkUserSession();
+    await this.checkUserSession();
     let attributes: UserAttribute[] = [];
     if (!this.userAttributes) {
       attributes = await this.getUserAttributes();
@@ -60,7 +67,7 @@ export class CognitoUser {
   }
 
   async getPreferredMFA() {
-    this.checkUserSession();
+    await this.checkUserSession();
     if (!this.user) {
       await this.getUserAttributes();
     }
@@ -68,15 +75,38 @@ export class CognitoUser {
   }
 
   async setupTOTP() {
-    this.checkUserSession();
-    return this.userPool.associateSoftwareToken(
-      this.session?.accessToken?.getJWTToken() ?? '',
+    await this.checkUserSession();
+    return this.userPool.associateSoftwareToken(this.accessToken);
+  }
+
+  async verifyTOTP(code: string, friendlyDeviceName?: string) {
+    await this.checkUserSession();
+    return this.userPool.verifySoftwareToken(
+      this.accessToken,
+      code,
+      friendlyDeviceName,
     );
   }
 
-  private checkUserSession() {
+  private async checkUserSession() {
     if (!this.session?.isValid() || !this.session.accessToken) {
+      if (this.session?.refreshToken) {
+        const res = await this.refreshUserSession(this.session.refreshToken);
+        if (res.AuthenticationResult) {
+          this.authenticate(res.AuthenticationResult);
+          return;
+        }
+      }
       throw new Error('User is not authenticated.');
     }
+  }
+
+  private refreshUserSession(token: string) {
+    return this.userPool.initiateAuth(
+      {
+        REFRESH_TOKEN: token,
+      },
+      'REFRESH_TOKEN_AUTH',
+    );
   }
 }

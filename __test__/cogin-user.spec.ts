@@ -1,5 +1,6 @@
 import { Cognin } from '../src/cognin';
 import { CognitoUser } from '../src/lib/user';
+import { getOTPFromSecret } from '../test_setup/utils/otp';
 
 const username = process.env.TEST_USERNAME ?? '';
 const password = process.env.TEST_PASSWORD ?? '';
@@ -27,8 +28,23 @@ describe('Cognin User', () => {
     expect(map.sub).toBeTruthy();
   });
 
-  it('will request code for creating TOTP token', async () => {
+  it('will request secret for creating TOTP token', async () => {
     const res = await user.setupTOTP();
     expect(res).toBeTruthy();
+  });
+
+  it('will verify totp token with Cognito', async () => {
+    const totpRes = await user.setupTOTP();
+    const password = getOTPFromSecret(totpRes.SecretCode);
+    const res = await user.verifyTOTP(password);
+
+    expect(res.Status).toEqual('SUCCESS');
+  });
+
+  it('will refresh token if session is invalid', async () => {
+    const previous = user.getSession()?.accessToken?.getJWTToken();
+    spyOn(user['session'] as any, 'isValid').and.returnValue(false);
+    await user['checkUserSession']();
+    expect(user.getSession()?.accessToken?.getJWTToken()).not.toEqual(previous);
   });
 });

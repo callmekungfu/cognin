@@ -18,6 +18,9 @@ import {
   SignUpResponseBody,
   GetUserResponse,
   AssociateSoftwareTokenResponseBody,
+  AssociateSoftwareTokenRequestBody,
+  VerifySoftwareTokenRequestBody,
+  VerifySoftwareTokenResponseBody,
 } from '../types/user-pool';
 import { SupportedUserPoolAction } from './cognito-actions';
 import { UserPoolExceptionHandler } from './error';
@@ -183,7 +186,7 @@ export class UserPool {
   }
 
   async associateSoftwareToken(accessToken: string) {
-    const requestBody: GetUserRequestBody = {
+    const requestBody: AssociateSoftwareTokenRequestBody = {
       AccessToken: accessToken,
     };
 
@@ -192,6 +195,26 @@ export class UserPool {
       requestBody,
     );
   }
+
+  async verifySoftwareToken(
+    accessToken: string,
+    code: string,
+    friendlyDeviceName?: string,
+  ) {
+    const requestBody: VerifySoftwareTokenRequestBody = {
+      AccessToken: accessToken,
+      UserCode: code,
+    };
+    if (friendlyDeviceName) {
+      requestBody.FriendlyDeviceName = friendlyDeviceName;
+    }
+    return this.request<VerifySoftwareTokenResponseBody>(
+      'VerifySoftwareToken',
+      requestBody,
+    );
+  }
+
+  async verifyAttribute() {}
 
   private async request<T = any>(
     action: SupportedUserPoolAction,

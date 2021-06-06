@@ -60,6 +60,13 @@ export interface AssociateSoftwareTokenRequestBody {
   Session?: String;
 }
 
+export interface VerifySoftwareTokenRequestBody {
+  AccessToken: string;
+  UserCode: string;
+  FriendlyDeviceName?: string;
+  Session?: string;
+}
+
 export interface UserAttribute {
   Name: string;
   Value: string;
@@ -99,6 +106,11 @@ export interface GetUserResponse {
 export interface AssociateSoftwareTokenResponseBody {
   SecretCode: string;
   Session: string;
+}
+
+export interface VerifySoftwareTokenResponseBody {
+  Session?: string;
+  Status: 'SUCCESS' | 'ERROR';
 }
 
 export interface MFAOption {

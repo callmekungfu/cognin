@@ -20,6 +20,24 @@ export class CognitoSession {
     this.clockDrift = clockDrift ?? this.calculateClockDrift();
   }
 
+  static fromCache(prefix: string) {
+    const getKey = (token: string) => prefix + token;
+    const RefreshToken = localStorage.getItem(getKey('refreshToken'));
+    const AccessToken = localStorage.getItem(getKey('accessToken'));
+    const IdToken = localStorage.getItem(getKey('idToken'));
+    if (!RefreshToken || !AccessToken || !IdToken) {
+      return undefined;
+    }
+    return new CognitoSession(
+      {
+        AccessToken,
+        IdToken,
+        RefreshToken,
+      },
+      prefix,
+    );
+  }
+
   /**
    * Checks to see if the session is still valid based on session expiry information found
    * in tokens and the current time (adjusted with clock drift)
