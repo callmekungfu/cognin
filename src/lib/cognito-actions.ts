@@ -8,6 +8,7 @@ export const SupportedUserPoolActionArray = <const>[
   'GetUser',
   'AssociateSoftwareToken',
   'VerifySoftwareToken',
+  'GlobalSignOut',
 ];
 export type SupportedUserPoolAction =
   typeof SupportedUserPoolActionArray[number];

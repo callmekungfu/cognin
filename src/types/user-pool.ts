@@ -128,7 +128,7 @@ export interface AuthenticationResult {
   ExpiresIn?: number;
   IdToken?: string;
   NewDeviceMetadata?: NewDeviceMetadataType;
-  RefreshToken?: string;
+  RefreshToken?: string | null;
   TokenType?: string;
 }
 

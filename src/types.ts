@@ -60,3 +60,8 @@ export type AuthChallenge =
   | 'DEVICE_PASSWORD_VERIFIER'
   | 'ADMIN_NO_SRP_AUTH'
   | 'NEW_PASSWORD_REQUIRED';
+
+export interface Credentials {
+  identityId?: string;
+  accessId?: string;
+}

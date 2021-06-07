@@ -42,9 +42,11 @@ describe('Cognin User', () => {
   });
 
   it('will refresh token if session is invalid', async () => {
-    const previous = user.getSession()?.accessToken?.getJWTToken();
+    const previous = (await user.getSession())?.accessToken?.getJWTToken();
     spyOn(user['session'] as any, 'isValid').and.returnValue(false);
     await user['checkUserSession']();
-    expect(user.getSession()?.accessToken?.getJWTToken()).not.toEqual(previous);
+    expect((await user.getSession())?.accessToken?.getJWTToken()).not.toEqual(
+      previous,
+    );
   });
 });

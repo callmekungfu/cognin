@@ -247,6 +247,12 @@ export class UserPool {
     );
   }
 
+  async globalSignOut(accessToken: string) {
+    return this.request<EmptyObject>('GlobalSignOut', {
+      AccessToken: accessToken,
+    });
+  }
+
   async verifyAttribute() {}
 
   /**

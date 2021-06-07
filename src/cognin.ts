@@ -15,6 +15,7 @@ const defaultConfigOptions: Partial<CogninConfiguration> = {
 export class Cognin {
   private config!: CogninConfiguration;
   private userPool!: UserPool;
+  private user?: CognitoUser;
 
   constructor(config?: CogninConfiguration) {
     if (config) {
@@ -39,6 +40,14 @@ export class Cognin {
   public signUp(opts: SignUpOptions) {
     this.validateClient();
     return this.userPool.signUp(opts);
+  }
+
+  public signOut(global = false) {
+    if (!this.user) {
+      Logger.warn('No user is signed in, sign out has been skipped.');
+      return;
+    }
+    return this.user?.signOut(global);
   }
 
   public confirmSignUp(
@@ -94,11 +103,39 @@ export class Cognin {
         Logger.error('CUSTOM_AUTH is not yet supported.');
       }
     }
+    const user = new CognitoUser(username, this.userPool);
     if (res?.AuthenticationResult) {
-      return new CognitoUser(username, this.userPool).authenticate(
-        res.AuthenticationResult,
-      );
+      user.authenticate(res.AuthenticationResult);
+      this.user = user;
     }
+    return user;
+  }
+
+  public async getPreferredMFA(user: CognitoUser) {
+    return user.getPreferredMFA();
+  }
+
+  public async getCurrentAuthenticatedUser() {
+    if (this.user && (await this.user.isUserSessionValid())) {
+      return this.user;
+    }
+    this.user = undefined;
+    return null;
+  }
+
+  public async getCurrentUserAttributes() {
+    if (this.user && (await this.user.isUserSessionValid())) {
+      return this.user.getUserAttributes();
+    }
+    this.user = undefined;
+    return null;
+  }
+
+  public async getCurrentUserAttributeMap() {
+    if (this.user && (await this.user.isUserSessionValid())) {
+      return this.user.getUserAttributeMap();
+    }
+    this.user = undefined;
     return null;
   }
 

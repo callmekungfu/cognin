@@ -4,7 +4,7 @@ import { JWTToken } from './helpers';
 export class CognitoSession {
   accessToken?: JWTToken;
   idToken?: JWTToken;
-  refreshToken?: string;
+  refreshToken?: string | null;
   clockDrift: number;
 
   constructor(
@@ -34,7 +34,7 @@ export class CognitoSession {
     const RefreshToken = localStorage.getItem(getKey('refreshToken'));
     const AccessToken = localStorage.getItem(getKey('accessToken'));
     const IdToken = localStorage.getItem(getKey('idToken'));
-    if (!RefreshToken || !AccessToken || !IdToken) {
+    if (!AccessToken || !IdToken) {
       return undefined;
     }
     return new CognitoSession(
@@ -61,6 +61,12 @@ export class CognitoSession {
       adjusted < this.accessToken?.getExpiration() &&
       adjusted < this.idToken?.getExpiration()
     );
+  }
+
+  clearSessionCache() {
+    this.removeToken('refreshToken');
+    this.removeToken('accessToken');
+    this.removeToken('idToken');
   }
 
   private setSessionTokens(res: AuthenticationResult) {
@@ -90,6 +96,11 @@ export class CognitoSession {
   private storeToken(key: string, token: string) {
     const fullKey = `${this.prefix}.${key}`;
     localStorage.setItem(fullKey, token);
+  }
+
+  private removeToken(key: string) {
+    const fullKey = `${this.prefix}.${key}`;
+    localStorage.removeItem(fullKey);
   }
 
   /**
